@@ -1,0 +1,97 @@
+@using VenueBooking.Models
+@model IEnumerable<VenueBooking.Models.Venue>
+
+@{
+    ViewData["Title"] = "Venues";
+}
+
+<h2>Venues</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Venue Name</th>
+            <th>Location</th>
+            <th>Capacity</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var venue in Model)
+        {
+            <tr>
+                <td>@venue.VenueName</td>
+                <td>@venue.Location</td>
+                <td>@venue.Capacity</td>
+                <td><img src="@venue.ImageUrl" alt="Image" width="100" height="100" /></td>
+                <td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Booking Specialist"))
+                    {
+                        <a href="@Url.Action("Edit", "Venue", new { id = venue.VenueId })">Edit</a> 
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-venue-id="@venue.VenueId" data-venue-name="@venue.VenueName">
+            	        Delete
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Booking Specialist"))
+{
+    <a href="@Url.Action("Create", "Venue")">Create New Venue</a>
+}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form id="deleteForm" method="post" asp-action="Delete">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="modalMessage">Are you sure you want to delete this venue?</p>
+          <input type="hidden" name="id" id="venueId" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const venueId = button.getAttribute('data-venue-id');
+        const venueName = button.getAttribute('data-venue-name');
+        const venueIdInput = deleteModal.querySelector('#venueId');
+        const modalMessage = deleteModal.querySelector('#modalMessage');
+
+        // Set form values
+        venueIdInput.value = venueId;
+        modalMessage.textContent = `Are you sure you want to delete venue "${venueName}"?`;
+
+        // Check for bookings via fetch (optional enhancement)
+        fetch(`/Venue/HasBookings?id=${venueId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.hasBookings) {
+                    modalMessage.textContent = `Cannot delete "${venueName}". It has bookings linked to it.`;
+                    deleteModal.querySelector('button[type="submit"]').disabled = true;
+                } else {
+                    deleteModal.querySelector('button[type="submit"]').disabled = false;
+                }
+            });
+    });
+</script>

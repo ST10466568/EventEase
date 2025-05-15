@@ -1,0 +1,55 @@
+@model VenueBooking.Models.Event
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit Event</h2>
+
+<hr />
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" id="editEventForm">
+<div asp-validation-summary="All" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="EventId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="EventName" text="Event Name" class="control-label"></label>
+        <input asp-for="EventName" class="form-control" />
+        <span asp-validation-for="EventName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="file">Upload Event Image</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label class="control-label">Bookings</label>
+        <hr />
+        <input type="hidden" id="bookingsJson" name="bookingsJson" value="" />
+        <div id="bookingsContainer">
+            <!-- Bookings will be added here -->
+        </div>
+        <button type="button" id="addBookingButton" class="btn btn-primary">Add Booking</button>
+        <span asp-validation-for="Bookings" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+    
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_Create_EditBookingsScriptsPartial");
+    }
+    
+}

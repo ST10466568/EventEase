@@ -1,0 +1,47 @@
+@model VenueBooking.Models.Booking
+@inject VenueBooking.Data.ApplicationDbContext _context
+
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h2>Edit Booking</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        Please fix the errors below before submitting.
+    </div>
+}
+<div class=" p-4 mb-5 bg-white">
+    <form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="BookingId" />
+
+        <div class="mb-3">
+            <label asp-for="EventId" text="Event" class="form-label"></label>
+            <select asp-for="EventId" class="form-select" asp-items="@(new SelectList(_context.Events, "EventId", "EventName"))"></select>
+            <span asp-validation-for="EventId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="VenueId" text="Venue" class="form-label"></label>
+            <select asp-for="VenueId" class="form-select" asp-items="@(new SelectList(_context.Venues, "VenueId", "VenueName"))"></select>
+            <span asp-validation-for="VenueId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="BookingDate" class="form-label"></label>
+            <input asp-for="BookingDate" class="form-control" type="date" />
+            <span asp-validation-for="BookingDate" class="text-danger"></span>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+    <a href="@Url.Action("Index", "Booking")">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

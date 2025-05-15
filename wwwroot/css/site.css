@@ -1,0 +1,92 @@
+/* Site.css - Custom Styles for Account Views */
+
+@import url('https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600,700');
+@import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fefeff;
+    color: #666666;
+}
+
+h2 {
+    font-family: 'Rajdhani', sans-serif;
+    color: #282828;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.logout.form-inline {
+    width: 50%; /* Override width */
+    margin: 0; /* Remove centering */
+    background: #ffffff; /* Remove background */
+    padding: 30px; /* Remove padding */
+    box-shadow: none; /* Remove shadow */
+    border-radius: 0; /* Remove rounded corners */
+}
+form {
+    width: 50%;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 600;
+    color: #111111;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #8929cf;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: #d102ff;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #8d18de;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #d102ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+}
+td {
+    text-align: left;
+}

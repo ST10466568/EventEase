@@ -1,0 +1,115 @@
+﻿@using VenueBooking.Models
+@model HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center home-header">
+    <h1 class="display-4">Welcome to EventEase</h1>
+    <p>Your premier destination for event and venue management.</p>
+</div>
+
+<form method="get" asp-action="Index" class="mb-4" style="width:100%;">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="eventName" class="form-control" placeholder="Search Event Name" value="@Context.Request.Query["eventName"]" />
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="venueName" class="form-control" placeholder="Search Venue Name" value="@Context.Request.Query["venueName"]" />
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="startDate" class="form-control" value="@Context.Request.Query["startDate"]" />
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="endDate" class="form-control" value="@Context.Request.Query["endDate"]" />
+        </div>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+<div class="row home-content">
+    <div class="col-md-6 home-section">
+        <h2>Upcoming Events</h2>
+        @if (Model != null && Model.Events != null && Model.Events.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Venue</th>
+                        <th>Date</th>
+                        <th>Poster</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var eventItem in Model.Events)
+                    {
+                        <tr>
+                            <td>@eventItem.EventName</td>
+                            <td>@eventItem.VenueName</td>
+                            <td>@(eventItem.BookingDate?.ToShortDateString() ?? "No booking date")</td>
+                            <td><img src="@eventItem.ImageUrl" alt="Image" width="100" height="100" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No upcoming events.</p>
+        }
+    </div>
+    <div class="col-md-6 home-section">
+        <h2>Available Venues</h2>
+        @if (Model != null && Model.Venues != null && Model.Venues.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Venue Name</th>
+                        <th>Location</th>
+                        <th>Capacity</th>
+                        <th>Venue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var venue in Model.Venues)
+                    {
+                        <tr>
+                            <td>@venue.VenueName</td>
+                            <td>@venue.Location</td>
+                            <td>@venue.Capacity</td>
+                            <td><img src="@venue.ImageUrl" alt="Image" width="100" height="100" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No venues available.</p>
+        }
+    </div>
+</div>
+
+<style>
+    .home-header {
+        margin-bottom: 30px;
+    }
+
+    .home-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .home-section {
+        flex: 1;
+        min-width: 300px;
+        padding: 20px;
+        border: 1px solid #ddd;
+    }
+</style>
