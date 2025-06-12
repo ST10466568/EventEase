@@ -9,6 +9,8 @@ C:\Projects\VenueBooking\bin\Debug\net9.0\VenueBooking.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\VenueBooking.pdb
 C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Core.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Identity.dll
+C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Storage.Blobs.dll
+C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Storage.Common.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\Humanizer.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -62,6 +64,7 @@ C:\Projects\VenueBooking\bin\Debug\net9.0\System.Configuration.ConfigurationMana
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.Drawing.Common.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.Formats.Asn1.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Projects\VenueBooking\bin\Debug\net9.0\System.IO.Hashing.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.Memory.Data.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.Runtime.Caching.dll
 C:\Projects\VenueBooking\bin\Debug\net9.0\System.Security.Cryptography.ProtectedData.dll
@@ -153,6 +156,7 @@ C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.csproj.CoreCompileInputs.
 C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.MvcApplicationPartsAssemblyInfo.cache
 C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.RazorAssemblyInfo.cache
 C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.RazorAssemblyInfo.cs
+C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.sourcelink.json
 C:\Projects\VenueBooking\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Projects\VenueBooking\obj\Debug\net9.0\scopedcss\bundle\VenueBooking.styles.css
 C:\Projects\VenueBooking\obj\Debug\net9.0\scopedcss\projectbundle\VenueBooking.bundle.scp.css
@@ -218,6 +222,8 @@ C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\1c6xkzkac3-2z0ns9nrw6.gz
 C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\fwwpu687me-muycvpuwrr.gz
 C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\g8fadzemis-87fc7y1x7t.gz
 C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\095jh25rzw-mlv21k5csn.gz
+C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\g41f3rme6z-pv734n04eg.gz
+C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\trid83xwb2-pv734n04eg.gz
 C:\Projects\VenueBooking\obj\Debug\net9.0\staticwebassets.build.json
 C:\Projects\VenueBooking\obj\Debug\net9.0\staticwebassets.development.json
 C:\Projects\VenueBooking\obj\Debug\net9.0\staticwebassets.build.endpoints.json
@@ -233,8 +239,3 @@ C:\Projects\VenueBooking\obj\Debug\net9.0\refint\VenueBooking.dll
 C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.pdb
 C:\Projects\VenueBooking\obj\Debug\net9.0\VenueBooking.genruntimeconfig.cache
 C:\Projects\VenueBooking\obj\Debug\net9.0\ref\VenueBooking.dll
-C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\g41f3rme6z-pv734n04eg.gz
-C:\Projects\VenueBooking\obj\Debug\net9.0\compressed\trid83xwb2-pv734n04eg.gz
-C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Storage.Blobs.dll
-C:\Projects\VenueBooking\bin\Debug\net9.0\Azure.Storage.Common.dll
-C:\Projects\VenueBooking\bin\Debug\net9.0\System.IO.Hashing.dll

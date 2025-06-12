@@ -46,3 +46,23 @@ button.accept-policy[b-1zj4xj1ixp] {
   white-space: nowrap;
   line-height: 60px;
 }
+
+.sticky-footer[b-1zj4xj1ixp] {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  height: 4.375rem;
+  line-height: 4.375rem;
+  background-color: #ffffff;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+}
+.sticky-footer .container-footer[b-1zj4xj1ixp] {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 6px;
+}
+.sticky-footer .copyright[b-1zj4xj1ixp] {
+  font-size: 0.8rem;
+  color: #858796;
+}

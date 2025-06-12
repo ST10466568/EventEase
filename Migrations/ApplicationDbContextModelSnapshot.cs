@@ -240,9 +240,6 @@ namespace VenueBooking.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EventId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -255,8 +252,6 @@ namespace VenueBooking.Migrations
                     b.HasKey("BookingId");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("EventId1");
 
                     b.HasIndex("VenueId");
 
@@ -289,6 +284,9 @@ namespace VenueBooking.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int?>("EventTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -303,9 +301,29 @@ namespace VenueBooking.Migrations
 
                     b.HasKey("EventId");
 
+                    b.HasIndex("EventTypeId");
+
                     b.HasIndex("VenueId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("VenueBooking.Models.EventType", b =>
+                {
+                    b.Property<int>("EventTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventTypeId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("EventTypeId");
+
+                    b.ToTable("EventTypes");
                 });
 
             modelBuilder.Entity("VenueBooking.Models.Venue", b =>
@@ -401,14 +419,10 @@ namespace VenueBooking.Migrations
             modelBuilder.Entity("VenueBooking.Models.Booking", b =>
                 {
                     b.HasOne("VenueBooking.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("VenueBooking.Models.Event", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("EventId1");
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VenueBooking.Models.Venue", "Venue")
                         .WithMany("Bookings")
@@ -423,10 +437,16 @@ namespace VenueBooking.Migrations
 
             modelBuilder.Entity("VenueBooking.Models.Event", b =>
                 {
+                    b.HasOne("VenueBooking.Models.EventType", "EventType")
+                        .WithMany("Events")
+                        .HasForeignKey("EventTypeId");
+
                     b.HasOne("VenueBooking.Models.Venue", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("EventType");
 
                     b.Navigation("Venue");
                 });
@@ -434,6 +454,11 @@ namespace VenueBooking.Migrations
             modelBuilder.Entity("VenueBooking.Models.Event", b =>
                 {
                     b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("VenueBooking.Models.EventType", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("VenueBooking.Models.Venue", b =>

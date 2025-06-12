@@ -86,4 +86,18 @@ static async Task InitializeRoles(IServiceProvider serviceProvider)
         await userManager.CreateAsync(user2, "Password123!");
     }
     await userManager.AddToRoleAsync(user2, "Booking Specialist");
+
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (!context.EventTypes.Any())
+    {
+        context.EventTypes.AddRange(
+            new EventType { Name = "Conference" },
+            new EventType { Name = "Wedding" },
+            new EventType { Name = "Concert" },
+            new EventType { Name = "Seminar" },
+            new EventType { Name = "Party" }
+        );
+        await context.SaveChangesAsync();
+    }
 }

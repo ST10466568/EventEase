@@ -115,23 +115,22 @@ public class VenueController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var venue = await _context.Venues
-            .Include(v => v.Bookings) // Assumes you have a navigation property
+            .Include(v => v.Bookings)
             .FirstOrDefaultAsync(v => v.VenueId == id);
 
         if (venue == null)
-        {
             return NotFound();
-        }
 
-        // Check if the venue has linked bookings
-        if ((User.IsInRole("Admin") || User.IsInRole("Booking Specialist")) && venue.Bookings != null && venue.Bookings.Any())
+        // ✅ Prevent deletion if venue has bookings
+        if (venue.Bookings.Any())
         {
-            TempData["ErrorMessage"] = "Cannot delete venue. It has existing bookings linked to it.";
+            TempData["ErrorMessage"] = "Cannot delete this venue. It has existing bookings.";
             return RedirectToAction(nameof(Index));
         }
 
         _context.Venues.Remove(venue);
         await _context.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index));
     }
 

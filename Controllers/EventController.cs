@@ -42,8 +42,30 @@ namespace VenueBooking.Controllers
         public async Task<IActionResult> Create()
         {
             await PopulateVenuesViewBag();
+            await PopulateEventTypesViewBag();
             var model = new Event { Bookings = new List<Booking>() };
             return View(model);
+        }
+
+        // GET: Event/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var eventItem = await _context.Events
+                .Include(e => e.Venue)
+                .Include(e => e.Bookings)
+                .FirstOrDefaultAsync(e => e.EventId == id);
+
+            if (eventItem == null)
+                return NotFound();
+            if (eventItem == null)
+                return NotFound();
+
+            await PopulateVenuesViewBag(eventItem.VenueId);
+            await PopulateEventTypesViewBag(eventItem.EventTypeId);
+            return View(eventItem);
         }
 
         // POST: Event/Create
@@ -96,24 +118,20 @@ namespace VenueBooking.Controllers
 
             await PopulateVenuesViewBag(eventItem.VenueId);
             return View(eventItem);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        }   
+           
+        // --- Helper method to populate the ViewBag for EventTypes ---
+        private async Task PopulateEventTypesViewBag(object selectedEventType = null)
         {
-            if (id == null)
-                return NotFound();
+            var eventTypesQuery = from et in _context.EventTypes // Assuming your EventType DbSet is called EventTypes
+                                  orderby et.Name // Or however you want to order them
+                                  select et;
 
-            var eventItem = await _context.Events
-                .Include(e => e.Venue)
-                .Include(e => e.Bookings)
-                .FirstOrDefaultAsync(e => e.EventId == id);
-
-            if (eventItem == null)
-                return NotFound();
-
-            await PopulateVenuesViewBag(eventItem.VenueId);
-            return View(eventItem);
+            // Assign the SelectList to ViewBag.EventTypeId
+            ViewBag.EventTypeId = new SelectList(await eventTypesQuery.AsNoTracking().ToListAsync(),
+                                                 "EventTypeId", // The property for the option value
+                                                 "Name",        // The property for the option text
+                                                 selectedEventType); // Optional: pre-select an item
         }
 
         [HttpPost]
@@ -123,56 +141,80 @@ namespace VenueBooking.Controllers
             if (id != eventItem.EventId)
                 return NotFound();
 
+            // Load the original event from the database
+            var existingEvent = await _context.Events
+                .Include(e => e.Bookings)
+                .FirstOrDefaultAsync(e => e.EventId == id);
+
+            if (existingEvent == null)
+                return NotFound();
+
+            // Upload new image if provided
             if (file != null && file.Length > 0)
             {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string fileUrl = await _blobService.UploadFileAsync(file, fileName);
-                eventItem.ImageUrl = fileUrl;
+                existingEvent.ImageUrl = fileUrl;
             }
 
-            eventItem.ModifiedBy = User.Identity?.Name ?? "Anonymous";
-            eventItem.ModifiedDate = DateTime.Now;
+            // Update event details
+            existingEvent.EventName = eventItem.EventName;
+            existingEvent.Description = eventItem.Description;
+            existingEvent.EventDate = eventItem.EventDate;
+            existingEvent.VenueId = eventItem.VenueId;
+            existingEvent.EventTypeId = eventItem.EventTypeId; // Ensure EventTypeId is updated
+            existingEvent.ModifiedBy = User.Identity?.Name ?? "Anonymous";
+            existingEvent.ModifiedDate = DateTime.Now;
 
+            // Deserialize bookings JSON
             var bookings = !string.IsNullOrEmpty(bookingsJson)
                 ? JsonConvert.DeserializeObject<List<Booking>>(bookingsJson)
                 : new List<Booking>();
 
-            if (ModelState.IsValid)
+            if (!string.IsNullOrEmpty(bookingsJson) && !bookings.Any())
             {
-                foreach (var booking in bookings)
+                TempData["ErrorMessage"] = "Booking data was provided but could not be processed.";
+                ModelState.AddModelError(string.Empty, "Invalid booking data.");
+                await PopulateVenuesViewBag(eventItem.VenueId);
+                return View(eventItem);
+            }
+            Console.WriteLine("Bookings parsed from JSON: " + bookings.Count);
+            // Validate conflicts
+            foreach (var booking in bookings)
+            {
+                Console.WriteLine("Booking parsed from JSON: " + booking);
+                if (await IsBookingConflictAsync(booking.VenueId, booking.BookingDate, booking.BookingId))
                 {
-                    if (await IsBookingConflictAsync(booking.VenueId, booking.BookingDate, booking.BookingId))
-                    {
-                        ModelState.AddModelError("Bookings", $"A booking already exists for this venue on {booking.BookingDate.ToShortDateString()}.");
-                        await PopulateVenuesViewBag(eventItem.VenueId);
-                        return View(eventItem);
-                    }
+                    ModelState.AddModelError("Bookings", $"Booking conflict on {booking.BookingDate.ToShortDateString()}.");
+                    await PopulateVenuesViewBag(eventItem.VenueId);
+                    return View(existingEvent);
                 }
-
-                _context.Update(eventItem);
-                await _context.SaveChangesAsync();
-
-                foreach (var booking in bookings)
-                {
-                    booking.EventId = eventItem.EventId;
-                    booking.CreatedBy ??= User.Identity?.Name ?? "Anonymous";
-                    booking.ModifiedBy = User.Identity?.Name ?? "Anonymous";
-                    booking.ModifiedDate = DateTime.Now;
-
-                    if (booking.BookingId == 0)
-                        _context.Bookings.Add(booking);
-                    else
-                        _context.Update(booking);
-                }
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
 
-            await PopulateVenuesViewBag(eventItem.VenueId);
-            return View(eventItem);
-        }
+            // Clear current bookings and re-attach
+            _context.Bookings.RemoveRange(existingEvent.Bookings);
 
+            foreach (var booking in bookings)
+            {
+                booking.EventId = existingEvent.EventId;
+                booking.CreatedBy ??= User.Identity?.Name ?? "Anonymous";
+                booking.CreatedDate ??= DateTime.Now;
+                booking.ModifiedBy = User.Identity?.Name ?? "Anonymous";
+                booking.ModifiedDate = DateTime.Now;
+
+                if (booking.BookingId == 0)
+                {
+                    _context.Bookings.Add(booking); // New booking
+                }
+                else
+                {
+                    _context.Bookings.Update(booking); // Existing booking
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
         // GET: Event/Delete
         public async Task<IActionResult> Delete(int? id)
         {
@@ -203,10 +245,10 @@ namespace VenueBooking.Controllers
             if (eventItem == null)
                 return NotFound();
 
-            // Prevent deletion if bookings exist and user is Admin
-            if ((User.IsInRole("Admin") || User.IsInRole("Booking Specialist")) && eventItem.Bookings.Any())
+            // ✅ Prevent deletion for *any user* if bookings exist
+            if (eventItem.Bookings.Any())
             {
-                TempData["ErrorMessage"] = "Cannot delete event. It has existing bookings.";
+                TempData["ErrorMessage"] = "Cannot delete this event. There are existing bookings.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -216,9 +258,10 @@ namespace VenueBooking.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Event/Index
         public async Task<IActionResult> Index()
         {
-            var events = await _context.Events.Include(e => e.Venue).ToListAsync();
+            var events = await _context.Events.Include(e => e.Venue).Include(e => e.EventType).ToListAsync();
             return View(events);
         }
 

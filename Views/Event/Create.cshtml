@@ -26,6 +26,13 @@
         <input type="file" name="file" class="form-control" />
     </div>
     <div class="form-group">
+    <label class="control-label">Event Type</label>
+    <select asp-for="EventTypeId" class="form-control" asp-items="ViewBag.EventTypeId">
+        <option value="">-- Select Event Type --</option>
+    </select>
+    <span asp-validation-for="EventTypeId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <label class="control-label">Bookings</label>
         <hr />
         <div id="bookingsContainer">

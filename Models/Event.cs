@@ -29,8 +29,12 @@ namespace VenueBooking.Models
         public DateTime? CreatedDate { get; set; }
         public string? ModifiedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }     
-        [BindNever]   
+  
         public List<Booking> Bookings { get; set; } = new List<Booking>();
+
+        public int? EventTypeId { get; set; } // Nullable to support existing data
+        [ForeignKey("EventTypeId")]
+        public EventType? EventType { get; set; }
     }
 }
 

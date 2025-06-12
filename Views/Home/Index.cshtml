@@ -24,6 +24,17 @@
         <div class="col-md-3">
             <input type="date" name="endDate" class="form-control" value="@Context.Request.Query["endDate"]" />
         </div>
+        <div class="col-md-3">
+            <select name="eventTypeId" class="form-select">
+                <option value="">All Event Types</option>
+                @foreach (var type in Model.EventTypes)
+                {
+                    <option value="@type.EventTypeId" selected="@(Context.Request.Query["eventTypeId"].ToString() == type.EventTypeId.ToString())">
+                        @type.Name
+                    </option>
+                }
+            </select>
+        </div>
         <div class="col-md-12">
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
@@ -40,8 +51,10 @@
                     <tr>
                         <th>Event Name</th>
                         <th>Venue</th>
+                        <th>Event Type</th> 
                         <th>Date</th>
                         <th>Poster</th>
+                                             
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +63,7 @@
                         <tr>
                             <td>@eventItem.EventName</td>
                             <td>@eventItem.VenueName</td>
+                            <td>@eventItem.EventTypeName</td>
                             <td>@(eventItem.BookingDate?.ToShortDateString() ?? "No booking date")</td>
                             <td><img src="@eventItem.ImageUrl" alt="Image" width="100" height="100" /></td>
                         </tr>

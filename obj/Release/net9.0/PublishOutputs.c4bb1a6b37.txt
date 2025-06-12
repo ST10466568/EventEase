@@ -6,6 +6,8 @@ C:\Projects\VenueBooking\bin\Release\net9.0\publish\VenueBooking.runtimeconfig.j
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\VenueBooking.pdb
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\Azure.Core.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\Azure.Identity.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\publish\Azure.Storage.Blobs.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\publish\Azure.Storage.Common.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
@@ -42,6 +44,7 @@ C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Configuration.Configu
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Drawing.Common.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Formats.Asn1.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.IdentityModel.Tokens.Jwt.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.IO.Hashing.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Memory.Data.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Runtime.Caching.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\publish\System.Security.Cryptography.ProtectedData.dll

@@ -16,42 +16,101 @@ namespace VenueBooking.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string eventName, string venueName, DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> Index(string? eventName, string? venueName, DateTime? startDate, DateTime? endDate, int? eventTypeId)
         {
-            var events = await _context.Events
-                .Include(e => e.Bookings).ThenInclude(b => b.Venue)
-                .Include(e => e.Venue)
-                .ToListAsync();
+            var eventsQuery = _context.Bookings
+                .Include(b => b.Venue)
+                .Include(b => b.Event)
+                    .ThenInclude(e => e.EventType)
+                .AsQueryable();
 
-            var eventsWithBookings = events
-                .SelectMany(
-                    e => e.Bookings.DefaultIfEmpty(),
-                    (e, b) => new EventBookingViewModel
-                    {
-                        EventName = e.EventName,
-                        BookingDate = b?.BookingDate,
-                        ImageUrl = e.ImageUrl,
-                        VenueName = b?.Venue?.VenueName ?? e.Venue?.VenueName ?? "No venue"
-                    })
-                .Where(x =>
-                    (string.IsNullOrEmpty(eventName) || x.EventName.Contains(eventName, StringComparison.OrdinalIgnoreCase)) &&
-                    (string.IsNullOrEmpty(venueName) || x.VenueName.Contains(venueName, StringComparison.OrdinalIgnoreCase)) &&
-                    (!startDate.HasValue || (x.BookingDate.HasValue && x.BookingDate.Value.Date >= startDate.Value.Date)) &&
-                    (!endDate.HasValue || (x.BookingDate.HasValue && x.BookingDate.Value.Date <= endDate.Value.Date)))
-                .ToList();
+            if (!string.IsNullOrEmpty(eventName))
+                eventsQuery = eventsQuery.Where(b => b.Event.EventName.Contains(eventName));
 
-            // 🎯 Filter venues too
-            var filteredVenues = await _context.Venues
-                .Where(v => string.IsNullOrEmpty(venueName) || v.VenueName.ToLower().Contains(venueName.ToLower()))
-                .ToListAsync();
+            if (!string.IsNullOrEmpty(venueName))
+                eventsQuery = eventsQuery.Where(b => b.Event.Venue.VenueName.Contains(venueName));
 
-            var viewModel = new HomeIndexViewModel
+            if (eventTypeId.HasValue)
+                eventsQuery = eventsQuery.Where(b => b.Event.EventTypeId == eventTypeId);
+
+            if (startDate.HasValue)
+                eventsQuery = eventsQuery.Where(b => b.BookingDate >= startDate.Value);
+
+            if (endDate.HasValue)
+                eventsQuery = eventsQuery.Where(b => b.BookingDate <= endDate.Value);
+
+            var events = await eventsQuery.Select(b => new EventBookingViewModel
             {
-                Events = eventsWithBookings,
-                Venues = filteredVenues
+                EventName = b.Event.EventName,
+                VenueName = b.Venue != null ? b.Venue.VenueName : "N/A" ,
+                BookingDate = b.BookingDate,
+                ImageUrl = b.Event.ImageUrl,
+                EventTypeName = b.Event.EventType != null ? b.Event.EventType.Name : "N/A"
+            }).ToListAsync();
+
+            // --- Logic to filter venues based on full booking within the date range ---
+            List<Venue> displayVenues;
+            var allVenues = await _context.Venues.ToListAsync();
+
+            if (startDate.HasValue && endDate.HasValue && startDate.Value <= endDate.Value)
+            {
+                displayVenues = new List<Venue>();
+                var datesInSearchRange = Enumerable.Range(0, (endDate.Value.Date - startDate.Value.Date).Days + 1)
+                                                   .Select(offset => startDate.Value.Date.AddDays(offset))
+                                                   .ToList();
+
+                if (datesInSearchRange.Any()) // Proceed only if the date range is valid and has dates
+                {
+                    // 1. Fetch relevant booking data (VenueId and distinct BookingDate.Date)
+                    var bookingsInDateRangeRaw = await _context.Bookings
+                        .Where(b => b.BookingDate.Date >= startDate.Value.Date && b.BookingDate.Date <= endDate.Value.Date)
+                        .Select(b => new { b.VenueId, BookingDate = b.BookingDate.Date }) // Select only what's needed
+                        .ToListAsync();
+
+                    // 2. Group and process in memory to create the dictionary
+                    var venueBookingsInDateRange = bookingsInDateRangeRaw
+                        .GroupBy(b => b.VenueId)
+                        .ToDictionary(
+                            g => g.Key, // VenueId
+                            g => new HashSet<DateTime>(g.Select(b => b.BookingDate).Distinct()) // Set of distinct dates
+                        );
+
+                    foreach (var venue in allVenues)
+                    {
+                        // Check if the venue is fully booked for all dates in the search range
+                        bool isFullyBooked = venueBookingsInDateRange.TryGetValue(venue.VenueId, out var bookedDatesForVenue) &&
+                                             datesInSearchRange.All(dateInSearch => bookedDatesForVenue.Contains(dateInSearch));
+
+                        if (!isFullyBooked)
+                        {
+                            displayVenues.Add(venue);
+                        }
+                    }
+                }
+                else // If date range is invalid or empty, behave as if no range was selected for venues
+                {
+                    displayVenues = allVenues;
+                }
+            }
+            else // No valid date range provided for filtering venues
+            {
+                displayVenues = allVenues;
+            }
+
+            // --- Further filter displayVenues by venueName if provided ---
+            if (!string.IsNullOrEmpty(venueName))
+            {
+                displayVenues = displayVenues.Where(v => v.VenueName.Contains(venueName, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var model = new HomeIndexViewModel
+            {
+                Events = events,
+                Venues = displayVenues, // Use the filtered list of venues
+                EventTypes = await _context.EventTypes.ToListAsync()
             };
 
-            return View(viewModel);
+            return View(model);
         }
 
         public IActionResult Privacy()

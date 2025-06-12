@@ -27,8 +27,9 @@ namespace VenueBooking.Data
         public DbSet<Venue> Venues { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<EventType> EventTypes { get; set; }
 
-           public override int SaveChanges()
+        public override int SaveChanges()
         {
             SetAuditProperties();
             return base.SaveChanges();
@@ -103,6 +104,12 @@ namespace VenueBooking.Data
                 .WithMany()
                 .HasForeignKey(e => e.VenueId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                modelBuilder.Entity<Booking>()
+        .HasOne(b => b.Event)
+        .WithMany(e => e.Bookings)
+        .HasForeignKey(b => b.EventId)
+        .OnDelete(DeleteBehavior.Cascade); // or .Restrict if needed
         }
     }
 

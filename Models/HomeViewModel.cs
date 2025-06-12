@@ -7,5 +7,6 @@ namespace VenueBooking.Models
     {
         public List<EventBookingViewModel> Events { get; set; }
         public List<Venue> Venues { get; set; }
+        public List<EventType> EventTypes { get; set; } = new();
     }
 }

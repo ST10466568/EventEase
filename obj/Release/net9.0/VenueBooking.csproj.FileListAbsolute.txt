@@ -217,8 +217,6 @@ C:\Projects\VenueBooking\obj\Release\net9.0\compressed\1c6xkzkac3-2z0ns9nrw6.gz
 C:\Projects\VenueBooking\obj\Release\net9.0\compressed\fwwpu687me-muycvpuwrr.gz
 C:\Projects\VenueBooking\obj\Release\net9.0\compressed\g8fadzemis-87fc7y1x7t.gz
 C:\Projects\VenueBooking\obj\Release\net9.0\compressed\095jh25rzw-mlv21k5csn.gz
-C:\Projects\VenueBooking\obj\Release\net9.0\compressed\g41f3rme6z-k5grv2h5xl.gz
-C:\Projects\VenueBooking\obj\Release\net9.0\compressed\trid83xwb2-k5grv2h5xl.gz
 C:\Projects\VenueBooking\obj\Release\net9.0\staticwebassets.build.json
 C:\Projects\VenueBooking\obj\Release\net9.0\staticwebassets.development.json
 C:\Projects\VenueBooking\obj\Release\net9.0\staticwebassets.build.endpoints.json
@@ -235,3 +233,9 @@ C:\Projects\VenueBooking\obj\Release\net9.0\VenueBooking.pdb
 C:\Projects\VenueBooking\obj\Release\net9.0\VenueBooking.genruntimeconfig.cache
 C:\Projects\VenueBooking\obj\Release\net9.0\ref\VenueBooking.dll
 C:\Projects\VenueBooking\bin\Release\net9.0\Newtonsoft.Json.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\Azure.Storage.Blobs.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\Azure.Storage.Common.dll
+C:\Projects\VenueBooking\bin\Release\net9.0\System.IO.Hashing.dll
+C:\Projects\VenueBooking\obj\Release\net9.0\VenueBooking.sourcelink.json
+C:\Projects\VenueBooking\obj\Release\net9.0\compressed\g41f3rme6z-pv734n04eg.gz
+C:\Projects\VenueBooking\obj\Release\net9.0\compressed\trid83xwb2-pv734n04eg.gz

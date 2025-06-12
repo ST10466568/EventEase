@@ -781,16 +781,16 @@
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1117"},{"Name":"Content-Type","Value":"text/plain"},{"Name":"ETag","Value":"\u0022hjIBkvmgxQXbNXK3B9YQ3t06RwLuQSQzC/dpvuB/lMk=\u0022"},{"Name":"Last-Modified","Value":"Wed, 19 Mar 2025 20:19:40 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/VenueBooking/VenueBooking.bundle.scp.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\VenueBooking.k5grv2h5xl.bundle.scp.css'))</AssetFile>
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\VenueBooking.pv734n04eg.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-eF7w4WCLkaikhHsjVyvqNBBmOmKhes1XX/RzAlWCD9w="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1130"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eF7w4WCLkaikhHsjVyvqNBBmOmKhes1XX/RzAlWCD9w=\u0022"},{"Name":"Last-Modified","Value":"Fri, 28 Mar 2025 18:20:28 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-pYoULp0Ix3ENyAbGfmMDPPU7sagcZTnKws2KDVXLLyw="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1562"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022pYoULp0Ix3ENyAbGfmMDPPU7sagcZTnKws2KDVXLLyw=\u0022"},{"Name":"Last-Modified","Value":"Thu, 15 May 2025 18:27:01 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/VenueBooking/VenueBooking.k5grv2h5xl.bundle.scp.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\VenueBooking.k5grv2h5xl.bundle.scp.css'))</AssetFile>
+    <StaticWebAssetEndpoint Include="_content/VenueBooking/VenueBooking.pv734n04eg.bundle.scp.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\VenueBooking.pv734n04eg.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"k5grv2h5xl"},{"Name":"integrity","Value":"sha256-eF7w4WCLkaikhHsjVyvqNBBmOmKhes1XX/RzAlWCD9w="},{"Name":"label","Value":"_content/VenueBooking/VenueBooking.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1130"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eF7w4WCLkaikhHsjVyvqNBBmOmKhes1XX/RzAlWCD9w=\u0022"},{"Name":"Last-Modified","Value":"Fri, 28 Mar 2025 18:20:28 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"pv734n04eg"},{"Name":"integrity","Value":"sha256-pYoULp0Ix3ENyAbGfmMDPPU7sagcZTnKws2KDVXLLyw="},{"Name":"label","Value":"_content/VenueBooking/VenueBooking.bundle.scp.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1562"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022pYoULp0Ix3ENyAbGfmMDPPU7sagcZTnKws2KDVXLLyw=\u0022"},{"Name":"Last-Modified","Value":"Thu, 15 May 2025 18:27:01 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
   </ItemGroup>
 </Project>

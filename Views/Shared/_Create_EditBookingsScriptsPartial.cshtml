@@ -1,193 +1,138 @@
 <script>
     $(document).ready(function () {
-        // Initialize bookings - Ensure it's an array even if Model.Bookings is null
         var bookings = @Html.Raw(Json.Serialize(Model.Bookings ?? new List<VenueBooking.Models.Booking>()));
-        var bookingIndex = 0; // Assuming you might still need this
+        console.log("Bookings array:", bookings);
 
-        // --- Check if bookings is not empty ---
+        var bookingIndex = 0;
+
         if (bookings && bookings.length > 0) {
-            // This block runs ONLY if 'bookings' has one or more items
-
             console.log("Bookings array has data. Initializing display.");
-
-            // Call the function to display the existing bookings
             updateBookingsDisplay();
-
         } else {
-            // This block runs if 'bookings' is null, undefined, or an empty array []
             console.log("No existing bookings found.");
-             $("#bookingsContainer").html("<p>No bookings added yet. Click 'Add Booking' to start.</p>");
+            $("#bookingsContainer").html("<p>No bookings added yet. Click 'Add Booking' to start.</p>");
         }
-        // --- End check ---
 
-
-        // Function to add a new booking (keep your existing function)
         function addBooking(venueId, bookingDate) {
-            // ... your addBooking logic ...
-             var booking = {
-                // Ensure newly added bookings have a temporary ID or null/0
-                // so the delete logic knows they aren't saved yet.
-                bookingId: 0, // Or null, undefined
-                VenueId: parseInt(venueId) || null, // Handle empty venue selection
+            var booking = {
+                bookingId: 0,
+                VenueId: parseInt(venueId) || null,
                 BookingDate: bookingDate
             };
             bookings.push(booking);
             updateBookingsDisplay();
         }
 
-        // Function to update the display of bookings (keep your existing function)
         function updateBookingsDisplay() {
             var container = $("#bookingsContainer");
-            container.empty(); // Clear existing bookings
+            container.empty();
 
             bookings.forEach(function (booking, index) {
-                 // --- Make sure date handling is robust ---
                 var bookingDiv = $(`<div class="booking-item"></div>`);
                 var bookingDateDiv = $(`<div class="form-group"></div>`);
                 var bookingDateLabel = $(`<label class="control-label">Booking Date</label>`);
                 var bookingDateInput = $(`<input type="date" name="bookings[${index}].BookingDate" class="form-control booking-date" required />`);
 
-                // Use booking.bookingDate OR booking.BookingDate (check both casings from JSON)
                 var dateStr = booking.bookingDate || booking.BookingDate;
                 if (dateStr) {
                     try {
                         var dateObj = new Date(dateStr);
-                        // Check if the date is valid
                         if (!isNaN(dateObj.getTime())) {
-                            // Format as YYYY-MM-DD for the input type="date"
                             bookingDateInput.val(dateObj.toISOString().split('T')[0]);
-                        } else {
-                            console.warn(`Invalid date string encountered: ${dateStr}`);
-                            // Optionally set a default value or leave blank
-                            // bookingDateInput.val('');
                         }
-                    } catch(e) {
-                         console.error(`Error parsing date string: ${dateStr}`, e);
-                         // Optionally set a default value or leave blank
-                         // bookingDateInput.val('');
+                    } catch (e) {
+                        console.error(`Error parsing date string: ${dateStr}`, e);
                     }
-                } else {
-                     // Handle case where date is null or undefined initially
-                     // bookingDateInput.val('');
                 }
-                // --- End Date Handling ---
-
 
                 var venueDiv = $(`<div class="form-group"></div>`);
                 var venueLabel = $(`<label class="control-label">Venue</label>`);
                 var venueSelect = $(`<select name="bookings[${index}].VenueId" class="form-control booking-venue" required></select>`);
                 @foreach (var venue in ViewBag.VenueId)
                 {
-                    // Use @Html.Raw if venue text might contain quotes or special chars
                     @:venueSelect.append($('<option value="@venue.Value">@Html.Raw(venue.Text)</option>'));
                 }
-                // Use booking.venueId OR booking.VenueId
                 venueSelect.val(booking.venueId || booking.VenueId);
 
-                // --- Remove Button Logic (keep your existing logic) ---
-                // Ensure booking.bookingId or booking.BookingId is correctly accessed
-                var bookingId = booking.bookingId || booking.BookingId || 0; // Default to 0 if not present
-                var removeButton = $(`<button type="button" class="btn btn-danger removeBookingButton" data-booking-id="${bookingId}">Remove</button><hr />`);
+                var bookingId = booking.bookingId || booking.BookingId || 0;
+                var hiddenId = $(`<input type="hidden" name="bookings[${index}].BookingId" value="${bookingId}" />`);
 
+                var removeButton = $(`<button type="button" class="btn btn-danger removeBookingButton" data-booking-id="${bookingId}">Remove</button><hr />`);
                 removeButton.click(function () {
                     var button = $(this);
                     var bookingIdToDelete = button.data('booking-id');
 
                     if (bookingIdToDelete && bookingIdToDelete > 0) {
-                        if (!confirm('Are you sure you want to remove this booking permanently? This cannot be undone.')) {
-                            return;
-                        }
+                        if (!confirm('Are you sure you want to remove this booking permanently?')) return;
                         $.ajax({
                             url: '@Url.Action("DeleteBooking", "Event")/' + bookingIdToDelete,
                             type: 'POST',
-                            // headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() }, // If using AntiForgeryToken
-                            success: function (result) {
-                                console.log('Booking deleted successfully on server.');
+                            success: function () {
                                 var currentIndex = bookings.findIndex(b => (b.bookingId || b.BookingId) === bookingIdToDelete);
                                 if (currentIndex > -1) {
                                     bookings.splice(currentIndex, 1);
                                     updateBookingsDisplay();
-                                } else {
-                                     console.warn("Could not find booking in client array after successful server delete.");
-                                     updateBookingsDisplay(); // Refresh UI anyway
                                 }
                             },
-                            error: function (xhr, status, error) {
-                                console.error("Error deleting booking:", status, error, xhr.responseText);
-                                alert('Error removing booking: ' + (xhr.responseJSON?.message || xhr.responseText || 'Please try again.'));
+                            error: function (xhr) {
+                                alert('Error removing booking: ' + (xhr.responseJSON?.message || xhr.responseText));
                             }
                         });
                     } else {
-                        console.log('Removing unsaved booking from UI.');
-                        // Find index based on the button's context if needed, or use the forEach index carefully
-                         var itemToRemove = button.closest('.booking-item');
-                         var indexToRemove = container.children('.booking-item').index(itemToRemove);
-                         if(indexToRemove > -1) {
+                        var itemToRemove = button.closest('.booking-item');
+                        var indexToRemove = container.children('.booking-item').index(itemToRemove);
+                        if (indexToRemove > -1) {
                             bookings.splice(indexToRemove, 1);
                             updateBookingsDisplay();
-                         } else {
-                             console.warn("Could not determine index of unsaved item to remove.");
-                             // As a fallback, might need to re-read all items from DOM if splice fails
-                         }
+                        }
                     }
                 });
-                // --- End Remove Button Logic ---
 
-                bookingDateDiv.append(bookingDateLabel);
-                bookingDateDiv.append(bookingDateInput);
-                venueDiv.append(venueLabel);
-                venueDiv.append(venueSelect);
-                bookingDiv.append(bookingDateDiv);
-                bookingDiv.append(venueDiv);
-                bookingDiv.append(removeButton);
+                bookingDateDiv.append(bookingDateLabel).append(bookingDateInput);
+                venueDiv.append(venueLabel).append(venueSelect);
+                bookingDiv.append(hiddenId).append(bookingDateDiv).append(venueDiv).append(removeButton);
                 container.append(bookingDiv);
             });
 
-            // Update the hidden input
             $("#bookingsJson").val(JSON.stringify(bookings));
-            // console.log("Updated Bookings array:", bookings); // For debugging
-            // console.log("Updated Hidden field value:", $("#bookingsJson").val()); // For debugging
         }
 
-
-        // --- Event Handlers ---
         $("#addBookingButton").click(function () {
-            // Add a new booking with default/empty values
-            addBooking(null, ""); // Pass null or an appropriate default for venueId
+            addBooking(null, "");
         });
 
-        // Note: The remove button click handler is now attached *inside* updateBookingsDisplay
-        // So this delegated handler might be redundant or cause issues if kept.
-        // You can likely remove this one:
-        // $("#bookingsContainer").on("click", ".removeBookingButton", function () {
-        //     $(this).closest(".booking-item").remove(); // This only removes from DOM, not the array or DB
-        // });
-
-        // Collect booking data before form submission (Adjust for Create/Edit form IDs if needed)
-        $("form#editEventForm, form#createEventForm").submit(function (event) {
-            console.log("Form is submitting");
-            // Re-read the current state from the DOM to ensure accuracy,
-            // especially if direct DOM manipulation happened elsewhere.
+        $("form#editEventForm, form#createEventForm").submit(function () {
             var currentBookings = [];
-            $("#bookingsContainer .booking-item").each(function (index) {
+            $("#bookingsContainer .booking-item").each(function () {
                 var bookingDate = $(this).find(".booking-date").val();
                 var venueId = $(this).find(".booking-venue").val();
-                // Include BookingId if it exists (for updates) - might need hidden input per item
-                 var bookingId = $(this).find(".removeBookingButton").data('booking-id') || 0;
+                var bookingId = $(this).find(".removeBookingButton").data('booking-id') || 0;
 
                 currentBookings.push({
-                    BookingId: parseInt(bookingId), // Send back the ID
+                    BookingId: parseInt(bookingId),
                     BookingDate: bookingDate,
-                    VenueId: parseInt(venueId) || null // Ensure VenueId is int or null
+                    VenueId: parseInt(venueId) || null
                 });
             });
-            // Update the main 'bookings' array and the hidden field
-            bookings = currentBookings; // Sync the main array
-            $("#bookingsJson").val(JSON.stringify(bookings));
-            console.log("Final Bookings array on submit:", bookings);
-            console.log("Final Hidden field value:", $("#bookingsJson").val());
-            // The form will now submit with the updated JSON
-        });
 
+            bookings = currentBookings;
+            $("#bookingsJson").val(JSON.stringify(bookings));
+        });
+        $("#checkButton").click(function () {
+            var currentBookings = [];
+            $("#bookingsContainer .booking-item").each(function () {
+                var bookingDate = $(this).find(".booking-date").val();
+                var venueId = $(this).find(".booking-venue").val();
+                var bookingId = $(this).find(".removeBookingButton").data('booking-id') || 0;
+
+                currentBookings.push({
+                    BookingId: parseInt(bookingId),
+                    BookingDate: bookingDate,
+                    VenueId: parseInt(venueId) || null
+                });
+            });
+
+            console.log("Serialized bookings:", currentBookings);
+        });
     });
 </script>

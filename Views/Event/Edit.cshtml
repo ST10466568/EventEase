@@ -27,6 +27,14 @@
         <input type="file" name="file" class="form-control" />
     </div>
     <div class="form-group">
+    <label class="control-label">Event Type</label>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <select asp-for="EventTypeId" class="form-control" asp-items="ViewBag.EventTypeId">
+        <option value="">-- Select Event Type --</option>
+    </select>
+    <span asp-validation-for="EventTypeId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <label class="control-label">Bookings</label>
         <hr />
         <input type="hidden" id="bookingsJson" name="bookingsJson" value="" />
@@ -36,10 +44,7 @@
         <button type="button" id="addBookingButton" class="btn btn-primary">Add Booking</button>
         <span asp-validation-for="Bookings" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-    </div>
-    
+    <input type="hidden" name="EventId" value="@Model.EventId" />
 </form>
 
 <div>
